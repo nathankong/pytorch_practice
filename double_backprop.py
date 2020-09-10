@@ -8,7 +8,7 @@ z = \sum_i (Wx)_i
 y = d^T \nabla_x z + \sum_i (Wx_2)_i
 
 Want to compute dy/dW. We need to backprop through
-\nabla_x z since z depends on W.
+\nabla_x z since the gradient itself  depends on W.
 """
 
 #====================================
