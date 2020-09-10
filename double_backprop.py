@@ -4,8 +4,8 @@ torch.manual_seed(0)
 """
 torch.autograd.grad(z,[x])[0] == W.sum(axis=0)
 
-z = Wx
-y = d^T \nabla_x z + Wx_2
+z = \sum_i (Wx)_i
+y = d^T \nabla_x z + \sum_i (Wx_2)_i
 
 Want to compute dy/dW. We need to backprop through
 \nabla_x z since z depends on W.
