@@ -2,13 +2,14 @@ import torch
 torch.manual_seed(0)
 
 """
+Based on http://luizgh.github.io/libraries/2018/06/22/pytorch-doublebackprop/
 torch.autograd.grad(z,[x])[0] == W.sum(axis=0)
 
 z = \sum_i (Wx)_i
 y = d^T \nabla_x z + \sum_i (Wx_2)_i
 
 Want to compute dy/dW. We need to backprop through
-\nabla_x z since the gradient itself  depends on W.
+\nabla_x z since the gradient itself depends on W.
 """
 
 #====================================
@@ -17,9 +18,9 @@ Want to compute dy/dW. We need to backprop through
 W = torch.rand(5, 4, requires_grad=True)
 x = torch.ones(4, 1, requires_grad=True)
 x2 = torch.ones(4, 1) * 2.0
-z = W.matmul(x).sum()
 d = torch.ones(4, 1) * 0.5
 
+z = W.matmul(x).sum()
 grad_x = torch.autograd.grad(z, [x])[0]
 assert d.shape == grad_x.shape
 y = W.matmul(x2).sum() + torch.mul(d, grad_x).sum()
@@ -37,9 +38,9 @@ assert x.grad is None
 W = torch.rand(5, 4, requires_grad=True)
 x = torch.ones(4, 1, requires_grad=True)
 x2 = torch.ones(4, 1) * 2.0
-z = W.matmul(x).sum()
 d = torch.Tensor([1.0, 2.0, 3.0, 4.0]).reshape(4,-1)
 
+z = W.matmul(x).sum()
 grad_x = torch.autograd.grad(z, [x], create_graph=True)[0]
 assert d.shape == grad_x.shape
 y = W.matmul(x2).sum() + torch.mul(d, grad_x).sum()
