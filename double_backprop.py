@@ -42,10 +42,15 @@ d = torch.Tensor([1.0, 2.0, 3.0, 4.0]).reshape(4,-1)
 
 z = W.matmul(x).sum()
 grad_x = torch.autograd.grad(z, [x], create_graph=True)[0]
-assert d.shape == grad_x.shape
-y = W.matmul(x2).sum() + torch.mul(d, grad_x).sum()
 x.requires_grad = False
+y = W.matmul(x2).sum() + torch.mul(d, grad_x).sum()
+
+assert d.shape == grad_x.shape
+assert not x.requires_grad
+assert not x2.requires_grad
+assert not d.requires_grad
 assert W.requires_grad
+assert z.requires_grad
 
 y.backward()
 print(W.grad)
