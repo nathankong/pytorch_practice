@@ -58,5 +58,8 @@ assert x.grad is None
 y = W.matmul(x).sum()
 y.backward()
 print(W.grad)
+W.grad = None
 
+W.grad = torch.ones_like(W)
+print(W.grad.data)
 
