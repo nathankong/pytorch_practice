@@ -58,4 +58,30 @@ assert torch.allclose(torch.mul(torch.ones(W.shape[0],1), d.t()) + \
         torch.ones_like(W) * 2.0, W.grad)
 assert x.grad is None
 
+#====================================
+# A test
+
+W = torch.rand(5, 4, requires_grad=True)
+x = torch.ones(4, 1, requires_grad=True)
+x2 = torch.ones(4, 1) * 2.0
+d = torch.ones(4, 1) * 0.5
+d.requires_grad_()
+x2.requires_grad_()
+
+z2 = W.matmul(x2).sum()
+grad_x = torch.autograd.grad(z2, [x2])[0]
+z = W.matmul(x + d).sum()
+assert d.shape == grad_x.shape
+y = z + z2 + torch.mul(d, grad_x).sum()
+x.requires_grad = False
+assert W.requires_grad
+
+y.backward()
+print(W.grad)
+print(d.grad)
+print(grad_x.flatten() + W.sum(axis=0))
+assert torch.allclose(W.grad, torch.ones_like(W)*2.0)
+assert x.grad is None
+
+
 

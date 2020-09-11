@@ -38,3 +38,25 @@ with torch.no_grad():
         assert x.grad is None
 
 
+W = torch.rand(5,4,requires_grad=True)
+x = torch.Tensor([1.,2.,3.,4.]).reshape(4,1)
+x.requires_grad_()
+y = W.matmul(x).sum()
+
+x_grad = torch.autograd.grad(y, [x])[0].flatten()
+print(x_grad)
+assert torch.allclose(W.sum(axis=0), x_grad)
+assert W.grad is None
+
+x.requires_grad = False
+y = W.matmul(x).sum()
+y.backward()
+print(W.grad)
+assert x.grad is None
+
+# Gradients accumulate
+y = W.matmul(x).sum()
+y.backward()
+print(W.grad)
+
+
