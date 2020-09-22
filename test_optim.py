@@ -51,18 +51,18 @@ x = torch.ones(4, 1, requires_grad=False)
 optimizer = torch.optim.SGD([W], lr=0.1)
 
 z = W.matmul(x).sum()
-grad_W = torch.autograd.grad(z, [W])[0]
+grad_W = torch.autograd.grad(z, [W])[0].detach()
 
-W.grad = grad_W.detach()
+# Manual update of W
+W_new = W - (0.1 * grad_W)
 
-# Manual change of W
-W_new = W - (0.1 * torch.ones_like(W))
-
-# Optimizer change of W
+# Manually change W's gradient and use optimizer to update W
+W.grad = grad_W
 optimizer.step()
 optimizer.zero_grad()
 
 assert torch.allclose(W.data, W_new)
+assert torch.equal(W.grad.data, torch.zeros_like(W))
 print("Correct")
 
 
