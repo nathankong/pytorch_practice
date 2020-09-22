@@ -1,7 +1,7 @@
 import torch
 import torch.optim as optim
 
-#=============================================================
+#==============================================================
 # Only update W
 W = torch.rand(5, 4, requires_grad=True)
 x = torch.ones(4, 1, requires_grad=True)
@@ -22,7 +22,7 @@ assert torch.allclose(x.data, torch.ones_like(x))
 assert torch.allclose(W.data, W_new)
 print("Correct")
 
-#=============================================================
+#==============================================================
 # Update both W and x
 W = torch.rand(5, 4, requires_grad=True)
 x = torch.ones(4, 1, requires_grad=True)
@@ -43,4 +43,26 @@ optimizer.step()
 assert torch.allclose(x.data, x_new)
 assert torch.allclose(W.data, W_new)
 print("Correct")
+
+#==============================================================
+# Manually update gradient of W, but use optimizer to update W
+W = torch.rand(5, 4, requires_grad=True)
+x = torch.ones(4, 1, requires_grad=False)
+optimizer = torch.optim.SGD([W], lr=0.1)
+
+z = W.matmul(x).sum()
+grad_W = torch.autograd.grad(z, [W])[0]
+
+W.grad = grad_W.detach()
+
+# Manual change of W
+W_new = W - (0.1 * torch.ones_like(W))
+
+# Optimizer change of W
+optimizer.step()
+optimizer.zero_grad()
+
+assert torch.allclose(W.data, W_new)
+print("Correct")
+
 
